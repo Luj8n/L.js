@@ -17,11 +17,11 @@
     return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
   };
 
-  module.radiansToDegrees = (rad) => {
+  module.radToDeg = (rad) => {
     return rad * (180 / Math.PI);
   };
 
-  module.degreesToRadians = (deg) => {
+  module.degToRad = (deg) => {
     return deg * (Math.PI / 180);
   };
 

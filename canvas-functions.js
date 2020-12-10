@@ -67,6 +67,14 @@
 
   // Canvas manipulation
 
+  module.save = () => {
+    module.ctx.save();
+  };
+
+  module.restore = () => {
+    module.ctx.restore();
+  };
+
   module.centerCanvas = () => {
     module.canvas.style.top = `${(innerHeight - module.canvas.height) / 2}px`;
     module.canvas.style.left = `${(innerWidth - module.canvas.width) / 2}px`;
@@ -83,32 +91,57 @@
     module.height = inputHeight;
   };
 
+  let ROTATED_IN_RAD = 0;
+
+  module.rotate = (angle) => {
+    ROTATED_IN_RAD += angle;
+    module.ctx.rotate(angle);
+  };
+
+  module.resetRotation = () => {
+    module.rotate(-ROTATED_IN_RAD);
+  };
+
   let SCALED_X = 1;
   let SCALED_Y = 1;
 
   module.scale = (scaleX, scaleY = scaleX) => {
-    SCALED_X *= scaleX;
-    SCALED_Y *= scaleY;
-    module.ctx.scale(scaleX, scaleY);
+    if (scaleX !== 0 && scaleY !== 0) {
+      SCALED_X *= scaleX;
+      SCALED_Y *= scaleY;
+      module.ctx.scale(scaleX, scaleY);
+    } else {
+      console.log("Scale can not be zero");
+    }
+  };
+
+  module.resetScale = () => {
+    module.ctx.scale(1 / SCALED_X, 1 / SCALED_Y);
+    SCALED_X = 1;
+    SCALED_Y = 1;
   };
 
   let TRANSLATED_X = 0;
   let TRANSLATED_Y = 0;
 
   module.translate = (x, y) => {
-    TRANSLATED_X += x * SCALED_X;
-    TRANSLATED_Y += y * SCALED_Y;
+    TRANSLATED_X += x;
+    TRANSLATED_Y += y;
     module.ctx.translate(x, y);
   };
 
+  module.resetTranslation = () => {
+    module.ctx.translate(-TRANSLATED_X, -TRANSLATED_Y);
+    TRANSLATED_X = 0;
+    TRANSLATED_Y = 0;
+  };
+
   module.background = (color = "white") => {
+    module.save();
+    module.ctx.setTransform(1, 0, 0, 1, 0, 0);
     module.ctx.fillStyle = color;
-    module.ctx.fillRect(
-      -TRANSLATED_X / SCALED_X,
-      -TRANSLATED_Y / SCALED_Y,
-      (module.canvas.width + TRANSLATED_X) / SCALED_X,
-      (module.canvas.height + TRANSLATED_Y) / SCALED_Y
-    );
+    module.ctx.fillRect(0, 0, module.canvas.width, module.canvas.height);
+    module.restore();
   };
 
   module.getImageData = (x, y, width, height) => {
@@ -297,28 +330,30 @@
   function startLoad() {
     if (typeof setup == "function") {
       setup();
+    } else {
+      console.log("No setup function provided");
     }
     if (typeof draw == "function") {
       startLoop();
+    } else {
+      console.log("No draw function provided");
     }
   }
 
-  // Animation Loop
   function startLoop() {
+    loop();
+  }
+
+  // Animation Loop
+  function loop() {
     let startTime = new Date();
     setTimeout(() => {
-      draw();
-      if (CANVAS_IS_CREATED) {
-        // reset scale
-        module.scale(1 / SCALED_X, 1 / SCALED_Y);
-        // reset translate
-        module.translate(-TRANSLATED_X, -TRANSLATED_Y);
-      }
       if (!NO_LOOP) {
+        draw();
         let endTime = new Date();
         let timeDifference = (endTime - startTime) / 1000;
         REAL_FPS = 1 / timeDifference;
-        requestAnimationFrame(startLoop); // Creating an animation loop
+        requestAnimationFrame(loop); // Creating an animation loop
       }
     }, 1000 / FPS);
   }
