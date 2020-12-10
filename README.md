@@ -7,7 +7,7 @@ I made L.js to learn and understand better javascript. L.js is really similar to
 ### To include just the javascript put this in the head:
 
 ```html
-<script src="https://cdn.jsdelivr.net/gh/Luj8n/L.js@main/Vector2D.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/Luj8n/L.js@main/general-functions.js"></script>
-<script src="https://cdn.jsdelivr.net/gh/Luj8n/L.js@main/canvas-functions.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Luj8n/L.js@v1.0/Vector2D.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Luj8n/L.js@v1.0/general-functions.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/Luj8n/L.js@v1.0/canvas-functions.js"></script>
 ```
